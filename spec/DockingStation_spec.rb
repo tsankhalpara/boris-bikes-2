@@ -8,10 +8,11 @@ it "releases a working bike" do
   expect(bike).to be_working
 end
 
-it "dockingstation allows bike to be docked" do
-  bike = subject.release_bike
-  expect(subject.docking(bike)).to eq "bike is docked"
+  it { is_expected.to respond_to(:docking).with(1).argument }
+
+it { is_expected.to respond_to(:bike) }
+it 'docks something' do
+    bike = Bike.new
+    expect(subject.docking(bike)).to eq bike
 end
-
-
 end
