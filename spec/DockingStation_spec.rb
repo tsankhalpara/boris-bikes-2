@@ -1,10 +1,10 @@
 require 'DockingStation'
-
+require 'bike'
 describe DockingStation do
   it { is_expected.to respond_to :release_bike }
 
   it "has a DEFAULT_CAPACITY" do
-    expect(subject.capacity).to eq DockingStation::DEFAULT_CAPACITY
+    expect(subject.capacity).to eq described_class::DEFAULT_CAPACITY
   end
 
   it 'releases a working bike' do
@@ -12,10 +12,26 @@ describe DockingStation do
     expect(bike).to be_working
   end
 
-  it "raise error if no bike is available" do
-    expect { subject.release_bike }.to raise_error("No bike is available")
+  it 'releases a broken bike' do
+    bike = Bike.new
+    bike.report_broken
+    expect(bike).to be_broken
   end
 
+  describe '#release_bike' do
+    it "raise error if no bike is available" do
+      expect { subject.release_bike }.to raise_error("No bike is available")
+    end
+
+    it "raise error if bike is broken" do
+      bike = Bike.new
+      bike.report_broken
+      docking_station = DockingStation.new
+      docking_station.docking(bike)
+      expect { docking_station.release_bike }.to raise_error("Bike is broken")
+    end
+
+  end
   it "raise error if docking station is full on default capacity" do
     bike = Bike.new
     subject.capacity.times{subject.docking(bike)}
